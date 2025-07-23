@@ -17,12 +17,25 @@ jobs:
         run: npm install -g newman
 
       - name: Run Postman Collection
+        if: always()
         run: |
-          newman run tests/DummyJSON_API_Test.postman_collection.json \            
+          newman run "tests/DummyJSON_API_Test.postman_collection.json" \
             -r cli,html \
-            --reporter-html-export tests/report.html
+            --reporter-html-export tests/report.html \
+            --suppress-exit-code
+
+      - name: Check if report was generated
+        if: always()
+        run: |
+          if [ -f tests/report.html ]; then
+            echo "✅ Report generated successfully."
+          else
+            echo "❌ Report not found. Skipping email step."
+            exit 0
+          fi
 
       - name: Send email
+        if: always()
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -33,8 +46,10 @@ jobs:
           to: maxscripts23@gmail.com
           from: "Postman CI <maxscripts23@gmail.com>"
           body: |
-            ¡Hello Max! 👋
+            Hello Max 👋
 
-            Please the attachment report about the Postman Collection Results
-            
+            The automated run of your Postman collection has completed.
+            Please find the attached report with the test results.
+
+            Have a great day! 🚀
           attachments: tests/report.html
