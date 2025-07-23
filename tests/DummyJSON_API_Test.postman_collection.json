@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "2c51518c-e466-4a7e-8b2d-571ffd5ffd26",
-		"name": "DummyJSON API Test",
+		"name": "DummyJSON_API_Test",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "16008928"
 	},
@@ -905,12 +905,12 @@
 		},
 		{
 			"key": "username",
-			"value": "FIXME",
+			"value": "jamesd",
 			"type": "string"
 		},
 		{
 			"key": "password",
-			"value": "FIXME",
+			"value": "jamesdpass",
 			"type": "string"
 		},
 		{
