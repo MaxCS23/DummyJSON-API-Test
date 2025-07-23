@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  ejecutar-tests:
+  Run-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -49,8 +49,8 @@ jobs:
         with:
           server_address: smtp.gmail.com
           server_port: 587          
-          username: ${{ secrets.EMAIL_USUARIO }}
-          password: ${{ secrets.EMAIL_CONTRASENA }}
+          username: ${{ secrets.EMAIL_USER }}
+          password: ${{ secrets.EMAIL_PASS }}
           subject: "Postman Run Results"
           to: maxscripts23@gmail.com
           from: "Postman CI <maxscripts23@gmail.com>"
