@@ -1,0 +1,39 @@
+name: Ejecutar colección Postman y enviar reporte
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  ejecutar-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v3
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run Postman Collection
+        run: |
+          newman run tests/DummyJSON_API_Test.postman_collection.json \            
+            -r cli,html \
+            --reporter-html-export tests/report.html
+
+      - name: Send email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USUARIO }}
+          password: ${{ secrets.EMAIL_CONTRASENA }}
+          subject: "Postman Run Results"
+          to: maxscripts23@gmail.com
+          from: "Postman CI <maxscripts23@gmail.com>"
+          body: |
+            ¡Hello Max! 👋
+
+            Please the attachment report about the Postman Collection Results
+            
+          attachments: tests/report.html

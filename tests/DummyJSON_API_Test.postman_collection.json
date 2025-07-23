@@ -1,0 +1,929 @@
+{
+	"info": {
+		"_postman_id": "2c51518c-e466-4a7e-8b2d-571ffd5ffd26",
+		"name": "DummyJSON API Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16008928"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login - Successful",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('accessToken').that.is.a('string');\r",
+									"    pm.expect(responseJSON).to.have.property('refreshToken').that.is.a('string');\r",
+									"    pm.expect(responseJSON).to.have.property('id').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('username').that.is.a('string');\r",
+									"    pm.expect(responseJSON).to.have.property('email').that.is.a('string');\r",
+									"    pm.expect(responseJSON).to.have.property('firstName').that.is.a('string');\r",
+									"    pm.expect(responseJSON).to.have.property('lastName').that.is.a('string');\r",
+									"    pm.expect(responseJSON).to.have.property('gender').that.is.a('string');\r",
+									"    pm.expect(responseJSON).to.have.property('image').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"jwtToken\", responseJSON.accessToken);\r",
+									"pm.collectionVariables.set(\"refreshToken\", responseJSON.refreshToken);\r",
+									"\r",
+									"pm.collectionVariables.set(\"sessionCookie\", pm.cookies.get(\"accessToken\"));\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\",\r\n    \"expiresInMins\": 30\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Invalid User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('message').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains 'Invalid credentials'\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Invalid credentials\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{$randomUserName}}\",\r\n    \"password\": \"{{password}}\",\r\n    \"expiresInMins\": 30\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Invalid Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('message').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains 'Invalid credentials'\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Invalid credentials\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{$randomPassword}}\",\r\n    \"expiresInMins\": 30\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Invalid Body",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('message').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains 'Unexpected token'\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Unexpected token\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{username}}\",\r\n    \"password\": \"{{password}}\",\r\n    \"email\": {{$randomEmail}},\r\n    \"expiresInMins\": 30\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get current auth user - Fake Token",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const fakeToken = \"eyFakeHeader.\" + Math.random().toString(36).substring(2) + \".fakeSignature\";\r",
+									"pm.collectionVariables.set(\"invalid_token\", fakeToken);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Fake token should not produce error 500\", function () {\r",
+									"    pm.expect(pm.response.code).to.not.eql(500)\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The response should contain a 401, 403, or 400 status code\", () => {\r",
+									"  pm.expect([\"401\", \"403\", \"400\"]).to.include(pm.response.code.toString());\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('message').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains 'invalid token'\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"invalid token\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{invalid_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get current auth user - Invalid Token",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const fakeToken = \"eyFakeHeader\" + Math.random().toString(36).substring(2) + \".fakeSignature\";\r",
+									"pm.collectionVariables.set(\"invalid_token\", fakeToken);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Invalid token should not produce error 500\", function () {\r",
+									"    pm.expect(pm.response.code).to.not.eql(500)\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The response should contain a 401, 403, or 400 status code\", () => {\r",
+									"  pm.expect([\"401\", \"403\", \"400\"]).to.include(pm.response.code.toString());\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('message').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains 'Invalid/Expired Token'\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Invalid/Expired Token\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{invalid_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get current auth user - Successful",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('username').that.is.a('string');\r",
+									"    pm.expect(responseJSON).to.have.property('password').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains the data from the current user\", function () {    \r",
+									"    const expectedUser = pm.collectionVariables.get(\"username\");\r",
+									"    const expectedPassword = pm.collectionVariables.get(\"password\");\r",
+									"    \r",
+									"    pm.expect(responseJSON.username).to.eql(expectedUser);\r",
+									"    pm.expect(responseJSON.password).to.eql(expectedPassword);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwtToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh auth session - Successful using refresh token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('accessToken').that.is.a('string');\r",
+									"    pm.expect(responseJSON).to.have.property('refreshToken').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"jwtToken\", responseJSON.accessToken);\r",
+									"pm.collectionVariables.set(\"refreshToken\", responseJSON.refreshToken);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\": \"{{refreshToken}}\",\r\n    \"expiresInMins\": 30\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/refresh",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh auth session - Successful using cookie",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('accessToken').that.is.a('string');\r",
+									"    pm.expect(responseJSON).to.have.property('refreshToken').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"jwtToken\", responseJSON.accessToken);\r",
+									"pm.collectionVariables.set(\"refreshToken\", responseJSON.refreshToken);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{    \r\n    \"expiresInMins\": 30\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/refresh",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh auth session - Fake Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Fake token should not produce error 500\", function () {\r",
+									"    pm.expect(pm.response.code).to.not.eql(500)\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The response should contain a 401, 403, or 400 status code\", () => {\r",
+									"  pm.expect([\"401\", \"403\", \"400\"]).to.include(pm.response.code.toString());\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('message').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains 'Invalid refresh token'\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Invalid refresh token\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const fakeToken = \"eyFakeHeader.\" + Math.random().toString(36).substring(2) + \".fakeSignature\";\r",
+									"pm.collectionVariables.set(\"invalid_token\", fakeToken);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\": \"{{invalid_token}}\",\r\n    \"expiresInMins\": 30\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/refresh",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh auth session - Invalid Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Invalid token should not produce error 500\", function () {\r",
+									"    pm.expect(pm.response.code).to.not.eql(500)\r",
+									"});\r",
+									"\r",
+									"pm.test(\"The response should contain a 401, 403, or 400 status code\", () => {\r",
+									"  pm.expect([\"401\", \"403\", \"400\"]).to.include(pm.response.code.toString());\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('message').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains 'Invalid refresh token'\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Invalid refresh token\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const fakeToken = \"eyFakeHeader\" + Math.random().toString(36).substring(2) + \".fakeSignature\";\r",
+									"pm.collectionVariables.set(\"invalid_token\", fakeToken);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\": \"{{invalid_token}}\",\r\n    \"expiresInMins\": 30\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/refresh",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get all products - Successful",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('products').that.is.a('array');\r",
+									"    pm.expect(responseJSON).to.have.property('total').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('skip').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('limit').that.is.a('number');\r",
+									"});\r",
+									"\r",
+									"var products = responseJSON.products;\r",
+									"var randomIndex = Math.floor(Math.random() * products.length);\r",
+									"\r",
+									"pm.collectionVariables.set(\"productId\", products[randomIndex].id);\r",
+									"pm.collectionVariables.set(\"productDescription\", products[randomIndex].description);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get single product - Successful",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('id').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('title').that.is.a('string');\r",
+									"    pm.expect(responseJSON).to.have.property('description').that.is.a('string');\r",
+									"    pm.expect(responseJSON).to.have.property('category').that.is.a('string');\r",
+									"    pm.expect(responseJSON).to.have.property('price').that.is.a('number');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response data matches the selected product \", function () {\r",
+									"    pm.expect(responseJSON.id).to.equal(pm.collectionVariables.get(\"productId\"));\r",
+									"    pm.expect(responseJSON.description).to.equal(pm.collectionVariables.get(\"productDescription\"));\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://dummyjson.com",
+			"type": "string"
+		},
+		{
+			"key": "jwtToken",
+			"value": ""
+		},
+		{
+			"key": "refreshToken",
+			"value": ""
+		},
+		{
+			"key": "sessionCookie",
+			"value": ""
+		},
+		{
+			"key": "username",
+			"value": "FIXME",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "FIXME",
+			"type": "string"
+		},
+		{
+			"key": "invalid_token",
+			"value": ""
+		},
+		{
+			"key": "productId",
+			"value": ""
+		},
+		{
+			"key": "productDescription",
+			"value": ""
+		}
+	]
+}
