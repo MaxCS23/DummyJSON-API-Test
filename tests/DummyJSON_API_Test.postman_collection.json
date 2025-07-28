@@ -756,6 +756,7 @@
 									"var products = responseJSON.products;\r",
 									"var randomIndex = Math.floor(Math.random() * products.length);\r",
 									"\r",
+									"pm.collectionVariables.set(\"productsTotal\", products.length);\r",
 									"pm.collectionVariables.set(\"productId\", products[randomIndex].id);\r",
 									"pm.collectionVariables.set(\"productDescription\", products[randomIndex].description);"
 								],
@@ -794,6 +795,272 @@
 							],
 							"path": [
 								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all products - Successful Limit Skip Select",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var responseJSON = pm.response.json();\r",
+									"var products = responseJSON.products;\r",
+									"var randomIndex = Math.floor(Math.random() * products.length);\r",
+									"var expectedLimit = pm.collectionVariables.get(\"randomLimit\");\r",
+									"var expectedSkip = pm.collectionVariables.get(\"randomSkip\");\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('products').that.is.a('array');\r",
+									"    pm.expect(responseJSON).to.have.property('total').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('skip').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('limit').that.is.a('number');\r",
+									"});\r",
+									"\r",
+									"pm.collectionVariables.set(\"productsTotal\", products.length);\r",
+									"pm.collectionVariables.set(\"productId\", products[randomIndex].id);\r",
+									"pm.collectionVariables.set(\"productDescription\", products[randomIndex].description);\r",
+									"\r",
+									"pm.test(\"First product has the correct properties\", function () {\r",
+									"    \r",
+									"    const product = responseJSON.products[0]; // Ajusta según tu estructura\r",
+									"\r",
+									"    pm.expect(product).to.have.all.keys(\"id\", \"title\", \"description\", \"price\");\r",
+									"});\r",
+									"\r",
+									"console.log(expectedLimit)\r",
+									"pm.test(`Body contains the right limit: ${expectedLimit}`, function (){\r",
+									"\r",
+									"    pm.expect(responseJSON.limit).to.eq(expectedLimit);\r",
+									"});\r",
+									"\r",
+									"console.log(expectedSkip)\r",
+									"pm.test(`Body contains the right limit: ${expectedSkip}`, function (){\r",
+									"\r",
+									"    pm.expect(responseJSON.skip).to.eq(expectedSkip);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"const randomLimit = Math.floor(Math.random() * (100 - 5 + 1)) + 5;\r",
+									"const randomSkip = Math.floor(Math.random() * (100 - 5 + 1)) + 5;\r",
+									"\r",
+									"pm.collectionVariables.set(\"randomLimit\", randomLimit);\r",
+									"pm.collectionVariables.set(\"randomSkip\", randomSkip);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products?limit={{randomLimit}}&skip={{randomSkip}}&select=title,description,price",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "{{randomLimit}}"
+								},
+								{
+									"key": "skip",
+									"value": "{{randomSkip}}"
+								},
+								{
+									"key": "select",
+									"value": "title,description,price"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all products - Invalid Limit",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('message').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains Invalid 'limit' - must be a number\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Invalid 'limit' - must be a number\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products?limit={{$randomAdjective}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "{{$randomAdjective}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all products - Invalid Skip",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('message').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains Invalid 'skip' - must be a number\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Invalid 'skip' - must be a number\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products?skip={{$randomAdjective}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "skip",
+									"value": "{{$randomAdjective}}"
+								}
 							]
 						}
 					},
@@ -855,6 +1122,247 @@
 							"path": [
 								"products",
 								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get single product - Invalid ID product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('message').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains 'not found'\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"not found\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let min = 5.5;\r",
+									"let max = 10.0;\r",
+									"\r",
+									"let invalidIdProduct = Math.random() * (max - min) + min;\r",
+									"\r",
+									"invalidIdProduct = parseFloat(invalidIdProduct.toFixed(2));\r",
+									"\r",
+									"pm.collectionVariables.set(\"invalidIdProduct\", invalidIdProduct);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/{{invalidIdProduct}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"{{invalidIdProduct}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search product - Successful",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('products').that.is.a('array');\r",
+									"    pm.expect(responseJSON).to.have.property('total').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('skip').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('limit').that.is.a('number');\r",
+									"});\r",
+									"\r",
+									"var searchKeyword = pm.environment.get(\"searchKeyword\");\r",
+									"\r",
+									"pm.test(`Body contains keyword \"${searchKeyword}\"`, function () {\r",
+									"    pm.expect(pm.response.text()).to.include(searchKeyword);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Array including the keywords to search for products\r",
+									"const keywords = [\"phone\", \"laptop\", \"fragrance\", \"shoes\", \"flavor\"];\r",
+									"\r",
+									"const randomKeyword = keywords[Math.floor(Math.random() * keywords.length)];\r",
+									"\r",
+									"pm.environment.set(\"searchKeyword\", randomKeyword);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/search?q={{searchKeyword}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "{{searchKeyword}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search product - Invalid Search keyword",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('products').that.is.a('array');\r",
+									"    pm.expect(responseJSON).to.have.property('total').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('skip').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('limit').that.is.a('number');\r",
+									"});\r",
+									"\r",
+									"var searchKeyword = pm.environment.get(\"searchKeyword\");\r",
+									"\r",
+									"pm.test(`Product array is empty \"${searchKeyword}\"`, function () {\r",
+									"    pm.expect(responseJSON.products.length).to.eq(0)\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Array including the keywords to search for products\r",
+									"const keywords = [\"phone\", \"laptop\", \"fragrance\", \"shoes\", \"flavor\"];\r",
+									"\r",
+									"const randomKeyword = keywords[Math.floor(Math.random() * keywords.length)];\r",
+									"\r",
+									"pm.environment.set(\"searchKeyword\", randomKeyword);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/search?q={{$randomEmail}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "{{$randomEmail}}"
+								}
 							]
 						}
 					},
@@ -923,6 +1431,26 @@
 		},
 		{
 			"key": "productDescription",
+			"value": ""
+		},
+		{
+			"key": "productsTotal",
+			"value": ""
+		},
+		{
+			"key": "randomIdProduct",
+			"value": ""
+		},
+		{
+			"key": "invalidIdProduct",
+			"value": ""
+		},
+		{
+			"key": "randomLimit",
+			"value": ""
+		},
+		{
+			"key": "randomSkip",
 			"value": ""
 		}
 	]
