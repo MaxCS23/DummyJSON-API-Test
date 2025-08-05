@@ -71,7 +71,8 @@
 								"auth",
 								"login"
 							]
-						}
+						},
+						"description": "## Login Endpoint\n\nThis endpoint allows users to authenticate and obtain a session token for accessing protected resources.\n\n### Request\n\n- **Method**: `POST`\n    \n- **Endpoint**: `{{baseUrl}}/auth/login`\n    \n- **Content-Type**: `application/json`\n    \n\n### Request Body\n\nThe request body must be a JSON object containing the following parameters:\n\n- **username** (string): The username of the user attempting to log in.\n    \n- **password** (string): The password associated with the username.\n    \n- **expiresInMins** (integer): The duration in minutes for which the session token should be valid.\n    \n\n### Example Request Body\n\n``` json\n{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\",\n  \"expiresInMins\": 30\n}\n\n ```\n\n### Response\n\nUpon successful authentication, the server will respond with a JSON object containing the session token and additional user information. The expected response format includes:\n\n- **token** (string): A session token that can be used for subsequent requests.\n    \n- **expiresAt** (string): The expiration time of the session token.\n    \n\n### Example Response\n\n``` json\n{\n  \"token\": \"eyJhbGciOiJIUzI1NiIsInR...\",\n  \"expiresAt\": \"2023-10-10T12:00:00Z\"\n}\n\n ```\n\n### Notes\n\n- Ensure that the username and password are correct to avoid authentication errors.\n    \n- The `expiresInMins` parameter determines how long the session token will remain valid."
 					},
 					"response": []
 				},
@@ -801,6 +802,258 @@
 					"response": []
 				},
 				{
+					"name": "Get all products - Successful Sort",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('products').that.is.a('array');\r",
+									"    pm.expect(responseJSON).to.have.property('total').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('skip').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('limit').that.is.a('number');\r",
+									"});\r",
+									"\r",
+									"var products = responseJSON.products;\r",
+									"var randomIndex = Math.floor(Math.random() * products.length);\r",
+									"\r",
+									"pm.collectionVariables.set(\"productsTotal\", products.length);\r",
+									"pm.collectionVariables.set(\"productId\", products[randomIndex].id);\r",
+									"pm.collectionVariables.set(\"productDescription\", products[randomIndex].description);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var orderKeywords = [\"asc\", \"desc\"];\r",
+									"\r",
+									"var randomIndexOrder = Math.floor(Math.random() * orderKeywords.length)\r",
+									"\r",
+									"pm.collectionVariables.set(\"orderKeyword\", orderKeywords[randomIndexOrder]);\r",
+									"\r",
+									"var sortByKeywords = [\"title\", \"category\", \"price\", \"brand\"];\r",
+									"\r",
+									"var randomIndexSort = Math.floor(Math.random() * sortByKeywords.length)\r",
+									"\r",
+									"pm.collectionVariables.set(\"sortByKeyword\", sortByKeywords[randomIndexSort]);\r",
+									"\r",
+									"console.log(`Order by: ${orderKeywords[randomIndexOrder]}`)\r",
+									"console.log(`Sort By: ${sortByKeywords[randomIndexSort]}`)"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products?sortBy={{sortByKeyword}}&order={{orderKeyword}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "sortBy",
+									"value": "{{sortByKeyword}}"
+								},
+								{
+									"key": "order",
+									"value": "{{orderKeyword}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all products - Invalid Sort",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('products').that.is.a('array');\r",
+									"    pm.expect(responseJSON).to.have.property('total').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('skip').that.is.a('number');\r",
+									"    pm.expect(responseJSON).to.have.property('limit').that.is.a('number');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var orderKeywords = [\"asc\", \"desc\"];\r",
+									"\r",
+									"var randomIndexOrder = Math.floor(Math.random() * orderKeywords.length)\r",
+									"\r",
+									"pm.collectionVariables.set(\"orderKeyword\", orderKeywords[randomIndexOrder]);\r",
+									"\r",
+									"console.log(`Order by: ${orderKeywords[randomIndexOrder]}`)\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products?sortBy={{$randomAdjective}}&order={{orderKeyword}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "sortBy",
+									"value": "{{$randomAdjective}}"
+								},
+								{
+									"key": "order",
+									"value": "{{orderKeyword}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all products - Invalid Sort - Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 400ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"var responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Response body is correct\", function () {\r",
+									"    pm.expect(responseJSON).to.have.property('message').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Body contains Order can be: 'asc' or 'desc'\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include(\"Order can be: 'asc' or 'desc'\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products?sortBy={{$randomAdjective}}&order={{$randomAdjective}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "sortBy",
+									"value": "{{$randomAdjective}}"
+								},
+								{
+									"key": "order",
+									"value": "{{$randomAdjective}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get all products - Successful Limit Skip Select",
 					"event": [
 						{
@@ -1451,6 +1704,14 @@
 		},
 		{
 			"key": "randomSkip",
+			"value": ""
+		},
+		{
+			"key": "orderKeyword",
+			"value": ""
+		},
+		{
+			"key": "sortByKeyword",
 			"value": ""
 		}
 	]
